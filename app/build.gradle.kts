@@ -30,24 +30,6 @@ android {
     val keystorePass = System.getenv("KEYSTORE_PASS") ?: "CaptureSposed2026!"
     val keyFile = rootProject.file(keystorePath)
 
-    if (!keyFile.exists()) {
-        try {
-            keyFile.parentFile?.mkdirs()
-            val cmd = arrayOf(
-                "keytool", "-genkeypair", "-v",
-                "-keystore", keyFile.absolutePath,
-                "-alias", "capturesposed",
-                "-keyalg", "RSA",
-                "-keysize", "2048",
-                "-validity", "10000",
-                "-storepass", keystorePass,
-                "-keypass", keystorePass,
-                "-dname", "CN=CaptureSposed,OU=Security,O=CaptureSposed,C=US"
-            )
-            ProcessBuilder(*cmd).start().waitFor()
-        } catch (_: Exception) {}
-    }
-
     signingConfigs {
         create("release") {
             if (keyFile.exists()) {
