@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +46,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -177,129 +180,92 @@ class MainActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                MainCard(isScreenshotSwitchOn)
+                MainCard()
                 TestCard()
             }
         }
     }
 
     @Composable
-    fun MainCard(isScreenshotSwitchOn: MutableState<Boolean>) {
-        OutlinedCard(modifier = Modifier.fillMaxWidth()){
-            Column(modifier = Modifier.padding(16.dp)){
+    fun MainCard() {
+        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ){
-                    if(XposedChecker.isEnabled()){
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                ) {
+                    if (XposedChecker.isEnabled()) {
                         Icon(painterResource(R.drawable.checklist_24), getString(R.string.status))
-                    }else{
+                    } else {
                         Icon(painterResource(R.drawable.error_24), getString(R.string.error))
                     }
-                    Text(getString(R.string.status_title), fontSize = 24.sp)
+                    Text(
+                        text = getString(R.string.status_title),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
 
                 if (!SuUtils.isRootAvailable()) {
                     Text(
                         text = getString(LocalContext.current, R.string.no_root_access),
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         textAlign = TextAlign.Start,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
-                }
-                else if (!XposedChecker.isEnabled()) {
+                } else if (!XposedChecker.isEnabled()) {
                     Text(
                         text = getString(LocalContext.current, R.string.module_disabled),
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         textAlign = TextAlign.Start,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
-                }
-                else {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ){
-                        if(isScreenshotSwitchOn.value){
-                            Text(
-                                text = getString(R.string.screenshot_status_blocked),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }else{
-                            Text(
-                                text = getString(R.string.screenshot_status_allowed),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
-                        Switch(
-                            checked = isScreenshotSwitchOn.value,
-                            onCheckedChange = { PrefsUtils.toggleScreenshotHookState() },
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ){
-                        if(isFlagSecureSwitchOn.value){
-                            Text(
-                                text = getString(R.string.flag_secure_status_disabled),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }else{
-                            Text(
-                                text = getString(R.string.flag_secure_status_enabled),
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-
-                        Switch(
+                } else {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // 1. Disable Secure Flag (First item as requested)
+                        SettingToggleRow(
+                            title = getString(R.string.flag_secure_title),
+                            subtitle = getString(R.string.flag_secure_subtitle),
                             checked = isFlagSecureSwitchOn.value,
-                            onCheckedChange = { PrefsUtils.toggleFlagSecureHookState() },
-                            modifier = Modifier.padding(10.dp)
+                            onCheckedChange = { PrefsUtils.toggleFlagSecureHookState() }
                         )
-                    }
-                    // If Android version is 15 or newer, show toggle for screen recording.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ){
-                            if(isScreenRecordSwitchOn.value){
-                                Text(
-                                    text = getString(R.string.screen_record_status_blocked),
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }else{
-                                Text(
-                                    text = getString(R.string.screen_record_status_allowed),
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
 
-                            Switch(
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            thickness = 1.dp
+                        )
+
+                        // 2. Block Screenshot Detection
+                        SettingToggleRow(
+                            title = getString(R.string.screenshot_detection_title),
+                            subtitle = if (isScreenshotSwitchOn.value) {
+                                getString(R.string.screenshot_status_blocked)
+                            } else {
+                                getString(R.string.screenshot_status_allowed)
+                            },
+                            checked = isScreenshotSwitchOn.value,
+                            onCheckedChange = { PrefsUtils.toggleScreenshotHookState() }
+                        )
+
+                        // 3. Block Recording Detection (Android 15+)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                                thickness = 1.dp
+                            )
+
+                            SettingToggleRow(
+                                title = getString(R.string.screen_record_detection_title),
+                                subtitle = if (isScreenRecordSwitchOn.value) {
+                                    getString(R.string.screen_record_status_blocked)
+                                } else {
+                                    getString(R.string.screen_record_status_allowed)
+                                },
                                 checked = isScreenRecordSwitchOn.value,
-                                onCheckedChange = { PrefsUtils.toggleScreenRecordHookState() },
-                                modifier = Modifier.padding(10.dp)
+                                onCheckedChange = { PrefsUtils.toggleScreenRecordHookState() }
                             )
                         }
                     }
@@ -309,32 +275,111 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun TestCard(){
-        OutlinedCard(modifier = Modifier.fillMaxWidth()){
-            Column(modifier = Modifier.padding(16.dp)){
+    fun SettingToggleRow(
+        title: String,
+        subtitle: String,
+        checked: Boolean,
+        onCheckedChange: () -> Unit
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Start
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 17.sp,
+                    textAlign = TextAlign.Start
+                )
+            }
+
+            Switch(
+                checked = checked,
+                onCheckedChange = { onCheckedChange() }
+            )
+        }
+    }
+
+    @Composable
+    fun TestCard() {
+        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ){
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                ) {
                     Icon(painterResource(R.drawable.test_tube_24), getString(R.string.card_title_testing))
-                    Text(getString(R.string.card_title_testing), fontSize = 24.sp)
-                }
-                Text(
-                    text = "Screenshot Counter: ${screenshotCounter.intValue}",
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.padding(10.dp),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                // If Android version is 15 or newer, show recording status.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                     Text(
-                        text = "Recording in Progress: ${screenRecordingActive.value}",
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.padding(10.dp),
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = getString(R.string.card_title_testing),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
+                }
+
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Screenshot Counter",
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "${screenshotCounter.intValue}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                            thickness = 1.dp
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Recording in Progress",
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = screenRecordingActive.value.ifEmpty { "NO" },
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (screenRecordingActive.value == "YES") {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.primary
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
