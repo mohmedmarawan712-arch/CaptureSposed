@@ -1,0 +1,1 @@
+Block Android's Screenshot and Screen Recording Detection APIs

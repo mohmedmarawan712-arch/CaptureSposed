@@ -1,0 +1,33 @@
+package com.keshav.capturesposed.tiles
+
+import android.service.quicksettings.Tile
+import android.service.quicksettings.TileService
+import com.keshav.capturesposed.utils.PrefsUtils
+import com.keshav.capturesposed.utils.SuUtils
+import com.keshav.capturesposed.utils.XposedChecker
+
+class FlagSecureQuickTile : TileService() {
+    override fun onStartListening() {
+        super.onStartListening()
+        PrefsUtils.loadPrefs()
+        setButtonState()
+    }
+
+    override fun onClick() {
+        super.onClick()
+        PrefsUtils.toggleFlagSecureHookState()
+        setButtonState()
+    }
+
+    private fun setButtonState() {
+        if (XposedChecker.isEnabled() && SuUtils.isRootAvailable()) {
+            if (PrefsUtils.isFlagSecureHookOn())
+                qsTile.state = Tile.STATE_ACTIVE
+            else
+                qsTile.state = Tile.STATE_INACTIVE
+        } else {
+            qsTile.state = Tile.STATE_UNAVAILABLE
+        }
+        qsTile.updateTile()
+    }
+}
