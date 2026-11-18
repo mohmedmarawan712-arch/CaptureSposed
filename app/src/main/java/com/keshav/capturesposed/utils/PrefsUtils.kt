@@ -72,6 +72,17 @@ object PrefsUtils {
         setHookState(flagSecureHookActive, "flagSecureHookActive", !isFlagSecureHookOn())
     }
 
+    fun isDetectionBlockingOn(): Boolean {
+        return isScreenshotHookOn() || isScreenRecordHookOn()
+    }
+
+    fun toggleDetectionBlockingState() {
+        val newState = !isDetectionBlockingOn()
+        setHookState(screenshotHookActive, "screenshotHookActive", newState)
+        setHookState(screenRecordHookActive, "screenRecordHookActive", newState)
+        SuUtils.refreshRecordingCallbacks()
+    }
+
     @SuppressLint("ApplySharedPref")
     private fun setHookState(liveData: MutableLiveData<Boolean>, prefKey: String, prefVal: Boolean) {
         if (XposedChecker.isEnabled()) {

@@ -15,13 +15,13 @@ class FlagSecureQuickTile : TileService() {
 
     override fun onClick() {
         super.onClick()
-        PrefsUtils.toggleFlagSecureHookState()
+        PrefsUtils.toggleDetectionBlockingState()
         setButtonState()
     }
 
     private fun setButtonState() {
         if (XposedChecker.isEnabled() && SuUtils.isRootAvailable()) {
-            if (PrefsUtils.isFlagSecureHookOn())
+            if (PrefsUtils.isDetectionBlockingOn())
                 qsTile.state = Tile.STATE_ACTIVE
             else
                 qsTile.state = Tile.STATE_INACTIVE

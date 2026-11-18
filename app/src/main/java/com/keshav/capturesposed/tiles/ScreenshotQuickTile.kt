@@ -6,7 +6,7 @@ import com.keshav.capturesposed.utils.PrefsUtils
 import com.keshav.capturesposed.utils.SuUtils
 import com.keshav.capturesposed.utils.XposedChecker
 
-class ScreenshotQuickTile: TileService() {
+class ScreenshotQuickTile : TileService() {
     override fun onStartListening() {
         super.onStartListening()
         PrefsUtils.loadPrefs()
@@ -15,18 +15,17 @@ class ScreenshotQuickTile: TileService() {
 
     override fun onClick() {
         super.onClick()
-        PrefsUtils.toggleScreenshotHookState()
+        PrefsUtils.toggleDetectionBlockingState()
         setButtonState()
     }
 
     private fun setButtonState() {
         if (XposedChecker.isEnabled() && SuUtils.isRootAvailable()) {
-            if (PrefsUtils.isScreenshotHookOn())
+            if (PrefsUtils.isDetectionBlockingOn())
                 qsTile.state = Tile.STATE_ACTIVE
             else
                 qsTile.state = Tile.STATE_INACTIVE
-        }
-        else {
+        } else {
             qsTile.state = Tile.STATE_UNAVAILABLE
         }
         qsTile.updateTile()

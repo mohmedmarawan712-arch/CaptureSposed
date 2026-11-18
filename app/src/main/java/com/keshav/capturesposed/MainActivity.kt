@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -94,11 +96,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             APPTheme {
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainer
-                ) {
-                    AppUI()
-                }
+                AppUI()
             }
         }
     }
@@ -148,6 +146,7 @@ class MainActivity : ComponentActivity() {
         val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
         Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
                 LargeTopAppBar(
                     title = {
@@ -159,10 +158,15 @@ class MainActivity : ComponentActivity() {
                             Spacer(Modifier.padding(horizontal = 5.dp))
                             Text(
                                 text = stringResource(R.string.xposed_name),
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     },
+                    colors = TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    ),
                     scrollBehavior = scrollBehavior
                 )
             },
@@ -188,7 +192,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MainCard() {
-        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -318,7 +328,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun TestCard() {
-        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

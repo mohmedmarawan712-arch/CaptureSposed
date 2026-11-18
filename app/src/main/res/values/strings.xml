@@ -11,7 +11,7 @@
     <!-- Feature 1: Disable Secure Flag -->
     <string name="flag_secure_title">Disable Secure Flag</string>
     <string name="flag_secure_subtitle">Allow screenshot and screen recording at all times</string>
-    <string name="flag_secure_tile_label">Disable Secure Flag</string>
+    <string name="flag_secure_tile_label">Block Detection</string>
     <string name="flag_secure_status_disabled">Bypassed (Screenshots allowed)</string>
     <string name="flag_secure_status_enabled">Enforced (Screenshots blocked)</string>
 
@@ -19,11 +19,11 @@
     <string name="screenshot_detection_title">Block Screenshot Detection</string>
     <string name="screenshot_status_blocked">Screenshot detection is blocked</string>
     <string name="screenshot_status_allowed">Screenshot detection is allowed</string>
-    <string name="screenshot_tile_label">Block Screenshot Detection</string>
+    <string name="screenshot_tile_label">Block Detection</string>
 
     <!-- Feature 3: Recording Detection -->
     <string name="screen_record_detection_title">Block Recording Detection</string>
     <string name="screen_record_status_blocked">Recording detection is blocked</string>
     <string name="screen_record_status_allowed">Recording detection is allowed</string>
-    <string name="screen_record_tile_label">Block Recording Detection</string>
+    <string name="screen_record_tile_label">Block Detection</string>
 </resources>
